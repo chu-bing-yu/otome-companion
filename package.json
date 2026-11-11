@@ -7,7 +7,7 @@
   "scripts": {
     "build": "node build.mjs",
     "test": "node --test",
-    "ship": "node build.mjs && node --test && node deploy.mjs",
+    "ship": "node dev/ship.mjs",
     "e2e": "node dev/e2e/run.mjs",
     "preview": "node dev/serve.mjs",
     "releases": "node rollback.mjs --list",
