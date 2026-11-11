@@ -215,7 +215,7 @@ export default {
     hud.addEventListener('contextmenu', onContextMenu);
 
     /* ---------- 更新 ---------- */
-    function renderSession(session, now) {
+    function renderSession(session, now, nextSession) {
       var status = session ? session.status : '';
       var progress = session ? progressOf(session, now) : 0;
       var remain = session ? remainingOf(session, now) : s.settings.focusMinutes * 60000;
@@ -224,7 +224,7 @@ export default {
       var stateText = '待开始';
       if (status === STATUS.RUNNING) stateText = session.kind === 'break' ? '休息中' : '专注中';
       else if (status === STATUS.PAUSED) stateText = '已暂停';
-      else if (status === STATUS.DONE) stateText = session.nextSession ? '本轮结束' : '已完成';
+      else if (status === STATUS.DONE) stateText = nextSession ? '本轮结束' : '已完成';
 
       setText(focusState, stateText);
       setText(focusRound, 'FOCUS · ' + (session ? '第 ' + session.round + ' / ' + session.rounds + ' 轮' : ''));
@@ -248,7 +248,7 @@ export default {
       setText(todayEl, fmtDurationLong(v.todayMs));
       setText(affinityEl, Math.round(v.affinity));
 
-      renderSession(next.session, now);
+      renderSession(next.session, now, next.nextSession);
 
       setText(meterValue, Math.round(v.energy) + ' / ' + v.energyMax);
       setWidth(barFill, v.energyMax ? v.energy / v.energyMax : 0);
