@@ -1,0 +1,15 @@
+{
+  "id": "otome-companion",
+  "name": "乙游陪伴",
+  "version": "0.1.0",
+  "description": "乙游风陪伴插件：立绘舞台、点触互动、陪伴与专注、衣装场景道具、日志与回忆。",
+  "author": "chu-bing-yu",
+  "entry": "https://raw.githubusercontent.com/chu-bing-yu/otome-companion/main/plugin.js",
+  "hash": "",
+  "permissions": [
+    "storage",
+    "ui",
+    "character",
+    "ai"
+  ]
+}

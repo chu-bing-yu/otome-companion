@@ -1,0 +1,1182 @@
+/* 舞台：背景 / 立绘 / HUD 卡片 / 气泡 */
+
+.oc-render {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  --oc-scene-tint: #0A0D13;
+  --oc-scene-light: #E8C98A;
+}
+
+.oc-scene {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(58% 38% at 76% 10%, rgba(232, 201, 138, .16), transparent 72%),
+    radial-gradient(52% 44% at 16% 32%, rgba(108, 140, 186, .12), transparent 74%),
+    linear-gradient(180deg, #151b28 0%, #0b0f16 46%, #06080c 100%);
+}
+
+/* 无背景图时的窗光：斜向暖光带 + 地面反光 */
+.oc-scene::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(112deg, transparent 46%, rgba(232, 201, 138, .08) 52%, transparent 62%),
+    radial-gradient(60% 22% at 50% 100%, rgba(232, 201, 138, .06), transparent 70%);
+  pointer-events: none;
+}
+
+.oc-scene__img {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center 28%;
+  opacity: 0;
+  transition: opacity .48s ease;
+  will-change: opacity;
+}
+
+.oc-scene__img.is-on {
+  opacity: 1;
+}
+
+.oc-scene__ambient {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: .9;
+}
+
+.oc-shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(10, 8, 6, .88) 0%, rgba(40, 22, 8, .22) 20%, rgba(6, 9, 14, 0) 38%, rgba(10, 8, 6, .48) 70%, rgba(6, 6, 8, .95) 100%);
+  box-shadow: inset 0 0 120px rgba(0, 0, 0, .55);
+}
+
+/* ---------------- 立绘 ---------------- */
+
+.oc-char {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.oc-char__look,
+.oc-char__breathe {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+.oc-char__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  transform-origin: 50% 100%;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+.oc-char__upper {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+.oc-char__tint {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: .16;
+  mix-blend-mode: soft-light;
+  background: radial-gradient(70% 50% at 50% 12%, var(--oc-scene-light, #E8C98A), transparent 70%);
+}
+
+.oc-render--empty .oc-char__img {
+  opacity: 0;
+}
+
+.oc-char__empty {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  transform: translate(-50%, -50%);
+  padding: 14px 22px;
+  border-radius: 14px;
+  border: 1px dashed rgba(232, 201, 138, .3);
+  color: rgba(243, 239, 231, .5);
+  font-size: 12px;
+  letter-spacing: .12em;
+  pointer-events: none;
+  text-align: center;
+  max-width: 72%;
+  line-height: 1.7;
+}
+
+.oc-render:not(.oc-render--empty) .oc-char__empty {
+  display: none;
+}
+
+.oc-char__glow {
+  position: absolute;
+  left: 50%;
+  top: 34%;
+  width: 78%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(circle, rgba(232, 201, 138, .18), rgba(232, 201, 138, 0) 62%);
+  transition: opacity .18s linear;
+}
+
+.oc-press-ring {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 50%;
+  border: 1px solid rgba(232, 201, 138, .8);
+  pointer-events: none;
+  opacity: 0;
+}
+
+.oc-press-ring.is-on {
+  animation: oc-ring .62s ease-out forwards;
+}
+
+@keyframes oc-ring {
+  0% {
+    opacity: .9;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(9);
+  }
+}
+
+/* ---------------- 顶部状态 ---------------- */
+
+.oc-top {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 26px);
+  left: 16px;
+  right: 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  z-index: 6;
+}
+
+.oc-id {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  max-width: 46%;
+}
+
+.oc-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex: 0 0 auto;
+  border: 1px solid rgba(232, 201, 138, .4);
+  background: radial-gradient(circle at 50% 30%, #2a3244, #0b0e15);
+  box-shadow: 0 0 0 3px rgba(232, 201, 138, .06), 0 8px 18px rgba(0, 0, 0, .5);
+  display: grid;
+  place-items: center;
+}
+
+.oc-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.oc-avatar__ph {
+  font-size: 15px;
+  color: var(--oc-gold);
+  opacity: .7;
+}
+
+.oc-id__main {
+  min-width: 0;
+}
+
+.oc-id__line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.oc-id__name {
+  font-size: 15.5px;
+  letter-spacing: .1em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.oc-id__lv {
+  font-family: var(--oc-sans);
+  font-size: 9px;
+  letter-spacing: .06em;
+  color: var(--oc-gold);
+  border: 1px solid rgba(232, 201, 138, .34);
+  border-radius: 3px;
+  padding: 1px 4px;
+  flex: 0 0 auto;
+}
+
+.oc-id__title {
+  font-size: 10px;
+  color: var(--oc-text-3);
+  letter-spacing: .14em;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.oc-stats {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding-top: 2px;
+  flex: 0 0 auto;
+}
+
+.oc-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--oc-sans);
+  font-size: 10px;
+  color: var(--oc-text-2);
+  white-space: nowrap;
+}
+
+.oc-stat .oc-icon {
+  width: 12px;
+  height: 12px;
+  color: var(--oc-gold);
+  opacity: .9;
+}
+
+.oc-stat b {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--oc-text);
+}
+
+.oc-stat i {
+  font-style: normal;
+  color: var(--oc-text-3);
+  font-size: 9px;
+}
+
+.oc-iconbtn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--oc-line-soft);
+  background: rgba(10, 13, 19, .5);
+  color: var(--oc-text-2);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.oc-iconbtn .oc-icon {
+  width: 13px;
+  height: 13px;
+}
+
+/* ---------------- FOCUS 卡 ---------------- */
+
+.oc-focuscard {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 86px);
+  left: 16px;
+  width: 170px;
+  padding: 12px 13px 11px;
+  z-index: 6;
+  border-radius: 15px;
+}
+
+.oc-focuscard__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 9px;
+}
+
+.oc-focuscard__state {
+  font-family: var(--oc-sans);
+  font-size: 9px;
+  letter-spacing: .12em;
+  color: var(--oc-gold);
+  opacity: .9;
+}
+
+.oc-focuscard__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.oc-ring {
+  width: 52px;
+  height: 52px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  position: relative;
+  display: grid;
+  place-items: center;
+  background: conic-gradient(rgba(232, 201, 138, .9) calc(var(--oc-progress, 0) * 360deg), rgba(255, 255, 255, .08) 0);
+  box-shadow: inset 0 0 0 1px rgba(232, 201, 138, .16), 0 0 18px rgba(232, 201, 138, .08);
+  transition: background .3s linear;
+}
+
+.oc-ring::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: #0b0f16;
+}
+
+.oc-ring__text {
+  position: relative;
+  z-index: 2;
+  font-family: var(--oc-sans);
+  font-size: 11px;
+  letter-spacing: .02em;
+  color: var(--oc-gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.oc-focuscard__meta {
+  min-width: 0;
+}
+
+.oc-focuscard__time {
+  font-family: var(--oc-sans);
+  font-size: 23px;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .01em;
+  color: var(--oc-text);
+}
+
+.oc-focuscard__total {
+  font-family: var(--oc-sans);
+  font-size: 9.5px;
+  color: var(--oc-text-3);
+  margin-top: 1px;
+}
+
+.oc-focuscard__task {
+  margin-top: 9px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, .06);
+  font-size: 10.5px;
+  color: var(--oc-text-2);
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  cursor: pointer;
+}
+
+.oc-focuscard__task span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.oc-focuscard__task em {
+  margin-left: auto;
+  font-style: normal;
+  color: var(--oc-gold);
+  opacity: .8;
+}
+
+/* ---------------- 右侧诗句与悬浮钮 ---------------- */
+
+.oc-poem {
+  position: absolute;
+  right: 13px;
+  top: 25%;
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  max-height: 50%;
+  white-space: nowrap;
+  font-size: 10.5px;
+  letter-spacing: .22em;
+  line-height: 1.9;
+  color: rgba(243, 239, 231, .4);
+  text-shadow: 0 0 14px rgba(0, 0, 0, .7);
+  pointer-events: none;
+  z-index: 5;
+}
+
+.oc-side {
+  position: absolute;
+  right: 12px;
+  top: 62%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 7;
+}
+
+.oc-roundbtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(232, 201, 138, .24);
+  background: rgba(10, 13, 19, .62);
+  color: var(--oc-gold);
+  cursor: pointer;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition: transform .18s ease, border-color .18s ease;
+}
+
+.oc-roundbtn:active {
+  transform: scale(.93);
+  border-color: rgba(232, 201, 138, .5);
+}
+
+.oc-roundbtn .oc-icon {
+  width: 15px;
+  height: 15px;
+}
+
+/* ---------------- 角色状态卡 ---------------- */
+
+.oc-statuscard {
+  position: absolute;
+  left: 16px;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 92px);
+  width: 214px;
+  padding: 11px 13px 12px;
+  z-index: 6;
+  border-radius: 15px;
+}
+
+.oc-statuscard__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.oc-statuscard__title {
+  font-size: 10.5px;
+  letter-spacing: .16em;
+  color: var(--oc-text-2);
+}
+
+.oc-statuscard__fold {
+  font-family: var(--oc-sans);
+  font-size: 9px;
+  color: var(--oc-gold);
+  opacity: .8;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.oc-meter {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-family: var(--oc-sans);
+  font-size: 9.5px;
+  color: var(--oc-text-3);
+  margin-bottom: 5px;
+}
+
+.oc-meter__label {
+  color: var(--oc-text-2);
+}
+
+.oc-meter__value {
+  margin-left: auto;
+  color: var(--oc-gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.oc-bar {
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .1);
+  overflow: hidden;
+  margin-bottom: 9px;
+}
+
+.oc-bar__fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(232, 201, 138, .55), rgba(232, 201, 138, .95));
+  transition: width .4s ease;
+}
+
+.oc-minirow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  color: var(--oc-text-3);
+  padding: 2.5px 0;
+}
+
+.oc-minirow .oc-icon {
+  width: 11px;
+  height: 11px;
+  color: var(--oc-gold);
+  opacity: .7;
+}
+
+.oc-minirow b {
+  color: var(--oc-text);
+  font-weight: 500;
+  font-family: var(--oc-sans);
+  font-size: 11px;
+}
+
+.oc-statuscard.is-folded .oc-meter,
+.oc-statuscard.is-folded .oc-bar,
+.oc-statuscard.is-folded .oc-minirow {
+  display: none;
+}
+
+.oc-minirow--link {
+  margin-top: 4px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, .06);
+  color: var(--oc-gold);
+  opacity: .8;
+  cursor: pointer;
+}
+
+.oc-mark {
+  position: absolute;
+  left: 18px;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 8px);
+  font-family: var(--oc-sans);
+  font-size: 7.5px;
+  letter-spacing: .26em;
+  color: rgba(243, 239, 231, .2);
+  z-index: 4;
+  pointer-events: none;
+}
+
+/* ---------------- 气泡 ---------------- */
+
+.oc-bubble {
+  position: absolute;
+  left: 50%;
+  bottom: 31%;
+  max-width: 76%;
+  padding: 11px 15px;
+  border-radius: 15px;
+  border: 1px solid var(--oc-line);
+  background: rgba(8, 11, 17, .84);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  font-size: 13px;
+  line-height: 1.75;
+  letter-spacing: .02em;
+  color: var(--oc-text);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, .5);
+  transform: translate(-50%, 8px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .22s ease, transform .22s ease;
+  z-index: 9;
+  text-align: left;
+}
+
+.oc-bubble.is-on {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.oc-bubble::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  transform: rotate(45deg);
+  background: rgba(8, 11, 17, .84);
+  border-right: 1px solid var(--oc-line);
+  border-bottom: 1px solid var(--oc-line);
+}
+
+/* ---------------- 内容卡片 ---------------- */
+
+.oc-card {
+  position: relative;
+  border-radius: 14px;
+  border: 1px solid var(--oc-line-soft);
+  background: rgba(255, 255, 255, .03);
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color .2s ease, transform .2s ease;
+}
+
+.oc-card:active {
+  transform: scale(.985);
+}
+
+.oc-card.is-active {
+  border-color: rgba(232, 201, 138, .6);
+  box-shadow: 0 0 0 1px rgba(232, 201, 138, .18), 0 10px 26px rgba(0, 0, 0, .45);
+}
+
+.oc-card__media {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  background: linear-gradient(160deg, #1a2130, #0a0d13);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.oc-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.oc-card__ph {
+  font-size: 10px;
+  color: var(--oc-text-3);
+  letter-spacing: .14em;
+}
+
+.oc-card__name {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 18px 9px 7px;
+  font-size: 11px;
+  letter-spacing: .08em;
+  background: linear-gradient(180deg, transparent, rgba(5, 7, 11, .9));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.oc-card__check {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(232, 201, 138, .92);
+  color: #1d1608;
+  display: grid;
+  place-items: center;
+}
+
+.oc-card__check .oc-icon {
+  width: 11px;
+  height: 11px;
+}
+
+.oc-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.oc-cards--three {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.oc-scenerow {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 2px 2px 10px;
+  scroll-snap-type: x mandatory;
+}
+
+.oc-scenerow::-webkit-scrollbar {
+  display: none;
+}
+
+.oc-scenecard {
+  flex: 0 0 62%;
+  scroll-snap-align: center;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--oc-line-soft);
+  background: rgba(255, 255, 255, .03);
+  position: relative;
+}
+
+.oc-scenecard.is-active {
+  border-color: rgba(232, 201, 138, .6);
+  box-shadow: 0 0 26px rgba(232, 201, 138, .14);
+}
+
+.oc-scenecard__media {
+  aspect-ratio: 16 / 10;
+  display: grid;
+  place-items: center;
+  background-size: cover;
+  background-position: center;
+}
+
+.oc-scenecard__meta {
+  padding: 9px 12px 11px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.oc-scenecard__name {
+  font-size: 12px;
+  letter-spacing: .1em;
+}
+
+.oc-scenecard__weather {
+  font-family: var(--oc-sans);
+  font-size: 9px;
+  color: var(--oc-text-3);
+  margin-left: auto;
+}
+
+/* ---------------- 专注页 ---------------- */
+
+.oc-focusview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 0 20px;
+}
+
+.oc-bigring {
+  width: min(56vw, 214px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  position: relative;
+  margin: 10px auto 16px;
+  background: conic-gradient(rgba(232, 201, 138, .92) calc(var(--oc-progress, 0) * 360deg), rgba(255, 255, 255, .07) 0);
+}
+
+.oc-bigring::after {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 30%, #141a25, #080b11 70%);
+  border: 1px solid rgba(255, 255, 255, .05);
+}
+
+.oc-bigring__inner {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+.oc-bigring__round {
+  font-family: var(--oc-sans);
+  font-size: 9.5px;
+  letter-spacing: .22em;
+  color: var(--oc-gold);
+  opacity: .85;
+}
+
+.oc-bigring__time {
+  font-family: var(--oc-sans);
+  font-size: 40px;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .01em;
+  margin: 4px 0 2px;
+}
+
+.oc-bigring__task {
+  font-size: 10.5px;
+  color: var(--oc-text-3);
+  max-width: 150px;
+  margin: 0 auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.oc-focusview__actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+/* ---------------- 侧栏时间轴 / 回忆 ---------------- */
+
+.oc-timeline {
+  position: relative;
+  padding-left: 14px;
+  border-left: 1px solid rgba(232, 201, 138, .14);
+  margin-left: 3px;
+}
+
+.oc-logitem {
+  position: relative;
+  padding: 8px 0 10px;
+}
+
+.oc-logitem::before {
+  content: "";
+  position: absolute;
+  left: -18px;
+  top: 13px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(232, 201, 138, .6);
+  box-shadow: 0 0 8px rgba(232, 201, 138, .5);
+}
+
+.oc-logitem__meta {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  font-family: var(--oc-sans);
+  font-size: 9px;
+  color: var(--oc-text-3);
+  letter-spacing: .1em;
+}
+
+.oc-logitem__text {
+  font-size: 12px;
+  line-height: 1.7;
+  margin-top: 3px;
+  color: var(--oc-text-2);
+}
+
+.oc-daylabel {
+  font-family: var(--oc-sans);
+  font-size: 9.5px;
+  letter-spacing: .2em;
+  color: var(--oc-gold);
+  opacity: .7;
+  margin: 16px 0 8px;
+}
+
+.oc-memocard {
+  border-radius: 14px;
+  border: 1px solid var(--oc-line-soft);
+  overflow: hidden;
+  background: rgba(255, 255, 255, .03);
+  cursor: pointer;
+}
+
+.oc-memocard__media {
+  aspect-ratio: 4 / 3;
+  background-size: cover;
+  background-position: center;
+  display: grid;
+  place-items: center;
+  font-size: 9px;
+  color: rgba(243, 239, 231, .28);
+  letter-spacing: .16em;
+}
+
+.oc-memocard__body {
+  padding: 9px 10px 10px;
+}
+
+.oc-memocard__title {
+  font-size: 11.5px;
+  letter-spacing: .06em;
+}
+
+.oc-memocard__text {
+  font-size: 10px;
+  color: var(--oc-text-3);
+  margin-top: 3px;
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.oc-memocard__day {
+  font-family: var(--oc-sans);
+  font-size: 8.5px;
+  color: var(--oc-gold);
+  opacity: .6;
+  margin-top: 5px;
+  letter-spacing: .14em;
+}
+
+/* ---------------- 通讯 ---------------- */
+
+.oc-chat {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.oc-chat__list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px 2px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.oc-msg {
+  max-width: 82%;
+  padding: 9px 13px;
+  border-radius: 14px;
+  font-size: 12.5px;
+  line-height: 1.75;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.oc-msg--char {
+  align-self: flex-start;
+  border: 1px solid var(--oc-line);
+  background: linear-gradient(150deg, rgba(30, 37, 52, .8), rgba(12, 16, 24, .86));
+  border-bottom-left-radius: 5px;
+}
+
+.oc-msg--user {
+  align-self: flex-end;
+  border: 1px solid rgba(255, 255, 255, .1);
+  background: rgba(243, 239, 231, .1);
+  border-bottom-right-radius: 5px;
+  color: var(--oc-text);
+}
+
+.oc-msg--sys {
+  align-self: center;
+  font-size: 9.5px;
+  letter-spacing: .12em;
+  color: var(--oc-text-3);
+  background: none;
+  border: none;
+  padding: 2px;
+}
+
+.oc-chat__input {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  padding: 8px 0 2px;
+  border-top: 1px solid rgba(255, 255, 255, .06);
+}
+
+.oc-chat__input .oc-input {
+  flex: 1;
+  max-height: 84px;
+  resize: none;
+}
+
+.oc-send {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(232, 201, 138, .4);
+  background: rgba(232, 201, 138, .16);
+  color: var(--oc-gold);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.oc-send .oc-icon {
+  width: 15px;
+  height: 15px;
+}
+
+.oc-typing {
+  align-self: flex-start;
+  display: flex;
+  gap: 3px;
+  padding: 10px 13px;
+}
+
+.oc-typing i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--oc-text-3);
+  animation: oc-dot 1s infinite ease-in-out;
+}
+
+.oc-typing i:nth-child(2) {
+  animation-delay: .15s;
+}
+
+.oc-typing i:nth-child(3) {
+  animation-delay: .3s;
+}
+
+@keyframes oc-dot {
+  0%, 100% {
+    opacity: .25;
+    transform: translateY(0);
+  }
+
+  50% {
+    opacity: .9;
+    transform: translateY(-2px);
+  }
+}
+
+/* ---------------- 道具 ---------------- */
+
+.oc-prop {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 2px;
+  border-bottom: 1px solid rgba(255, 255, 255, .05);
+}
+
+.oc-prop:last-child {
+  border-bottom: none;
+}
+
+.oc-prop__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--oc-line-soft);
+  background: rgba(255, 255, 255, .04);
+  overflow: hidden;
+  color: var(--oc-gold);
+}
+
+.oc-prop__icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.oc-prop__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.oc-prop__name {
+  font-size: 12px;
+}
+
+.oc-prop__sub {
+  font-size: 10px;
+  color: var(--oc-text-3);
+  margin-top: 2px;
+}
+
+.oc-prop__given {
+  font-family: var(--oc-sans);
+  font-size: 9px;
+  color: var(--oc-gold);
+  opacity: .7;
+}
+
+/* 首次引导 */
+
+.oc-guide {
+  position: absolute;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 86px);
+  transform: translateX(-50%);
+  width: min(84%, 320px);
+  padding: 14px 16px;
+  z-index: 10;
+  border-radius: 16px;
+}
+
+.oc-guide__title {
+  font-size: 13px;
+  letter-spacing: .1em;
+  margin-bottom: 4px;
+}
+
+.oc-guide__desc {
+  font-size: 10.5px;
+  color: var(--oc-text-3);
+  line-height: 1.7;
+  margin-bottom: 10px;
+}
+
+.oc-guide__actions {
+  display: flex;
+  gap: 8px;
+}
+
+@media (min-width: 720px) and (orientation: landscape) {
+  .oc-char {
+    right: 34%;
+  }
+
+  .oc-poem {
+    right: auto;
+    left: 46%;
+    top: 22%;
+  }
+
+  .oc-side {
+    right: auto;
+    left: 46%;
+    top: 56%;
+  }
+
+  .oc-focuscard {
+    width: 186px;
+  }
+
+  .oc-statuscard {
+    width: 232px;
+  }
+
+  .oc-mark {
+    left: 22px;
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "otome-companion",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Roche 乙游风陪伴插件",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test",
+    "ship": "node build.mjs && node --test && node deploy.mjs",
+    "e2e": "node dev/e2e/run.mjs",
+    "preview": "node dev/serve.mjs",
+    "releases": "node rollback.mjs --list",
+    "rollback": "node rollback.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
+  }
+}
